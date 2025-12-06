@@ -1,17 +1,17 @@
 defmodule Day1 do
   def part1() do
-    parse(File.read!("lib/fixtures/day1.txt"))
+    parse()
     |> Enum.max()
   end
 
   def part2() do
-    parse(File.read!("lib/fixtures/day1.txt"))
+    parse()
     |> Enum.sort(:desc)
     |> Enum.take(3)
     |> Enum.sum()
   end
 
-  def parse(input) do
+  def parse(input \\ File.read!("lib/fixtures/day1.txt")) do
     input
     |> String.trim()
     |> String.split("\n")
