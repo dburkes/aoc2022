@@ -4,6 +4,13 @@ defmodule Day1 do
     |> Enum.max()
   end
 
+  def part2() do
+    parse(File.read!("lib/fixtures/day1.txt"))
+    |> Enum.sort(:desc)
+    |> Enum.take(3)
+    |> Enum.sum()
+  end
+
   def parse(input) do
     input
     |> String.trim()

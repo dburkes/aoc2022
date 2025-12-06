@@ -25,4 +25,8 @@ defmodule Day1Test do
   test "part1" do
     assert Day1.part1() == 70374
   end
+
+  test "part2" do
+    assert Day1.part2() == 204_610
+  end
 end
