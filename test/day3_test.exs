@@ -53,6 +53,6 @@ defmodule Day3Test do
   end
 
   test "part1" do
-    assert Day3.part1() == 0
+    assert Day3.part1() == 7817
   end
 end
