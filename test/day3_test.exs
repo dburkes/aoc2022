@@ -34,7 +34,7 @@ defmodule Day3Test do
     assert String.length(elem(Enum.at(sacks, 5), 1)) == 12
   end
 
-  test "finding common item" do
+  test "finding common item within a single rucksack" do
     sacks = Day3.parse(@input)
 
     assert Day3.find_common_item(Enum.at(sacks, 0)) == "p"
@@ -43,6 +43,13 @@ defmodule Day3Test do
     assert Day3.find_common_item(Enum.at(sacks, 3)) == "v"
     assert Day3.find_common_item(Enum.at(sacks, 4)) == "t"
     assert Day3.find_common_item(Enum.at(sacks, 5)) == "s"
+  end
+
+  test "finding common item between three rucksacks" do
+    sacks = Day3.parse(@input)
+
+    assert Day3.find_common_item(Enum.at(sacks, 0), Enum.at(sacks, 1), Enum.at(sacks, 2)) == "r"
+    assert Day3.find_common_item(Enum.at(sacks, 3), Enum.at(sacks, 4), Enum.at(sacks, 5)) == "Z"
   end
 
   test "priority" do
@@ -54,5 +61,9 @@ defmodule Day3Test do
 
   test "part1" do
     assert Day3.part1() == 7817
+  end
+
+  test "part2" do
+    assert Day3.part2() == 2444
   end
 end
