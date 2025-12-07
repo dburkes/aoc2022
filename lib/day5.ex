@@ -1,29 +1,42 @@
 defmodule Day5 do
   def part1() do
     parse()
-    |> message()
+    |> message(:single)
   end
 
-  def message({stacks, moves}) do
-    move(stacks, moves)
+  def part2() do
+    parse()
+    |> message(:multiple)
+  end
+
+  def message({stacks, moves}, mode) do
+    move(stacks, moves, mode)
     |> Enum.map(&String.at(&1, -1))
     |> Enum.join()
   end
 
-  def move(stacks, {count, from, to}) do
+  def move(stacks, {count, from, to}, mode) do
     from_stack = List.pop_at(stacks, from - 1) |> elem(0)
     to_stack = List.pop_at(stacks, to - 1) |> elem(0)
     crates_to_move = String.slice(from_stack, -count, count)
 
-    List.update_at(stacks, to - 1, fn _ -> to_stack <> String.reverse(crates_to_move) end)
+    List.update_at(stacks, to - 1, fn _ ->
+      case mode do
+        :single ->
+          to_stack <> String.reverse(crates_to_move)
+
+        :multiple ->
+          to_stack <> crates_to_move
+      end
+    end)
     |> List.update_at(from - 1, fn _ ->
       String.slice(from_stack, 0..-(count + 1)//1)
     end)
   end
 
-  def move(stacks, moves) do
+  def move(stacks, moves, mode) do
     Enum.reduce(moves, stacks, fn move, acc ->
-      move(acc, move)
+      move(acc, move, mode)
     end)
   end
 
