@@ -42,12 +42,28 @@ defmodule Day8Test do
     assert Day8.visible?(forest, {4, 2}) == true
   end
 
-  test "counting visible forest in forest" do
+  test "counting visible trees in forest" do
     forest = Day8.parse(@input)
     assert Day8.visible_count(forest) == 21
   end
 
+  test "visibility_score" do
+    forest = Day8.parse(@input)
+
+    assert Day8.visibility_score(forest, {1, 2}) |> elem(0) == 4
+    assert Day8.visibility_score(forest, {3, 2}) |> elem(0) == 8
+  end
+
+  test "finding highest visibility score" do
+    forest = Day8.parse(@input)
+    assert Day8.max_visibility_score(forest) == {8, {3, 2}}
+  end
+
   test "part 1" do
     assert Day8.part1() == 1719
+  end
+
+  test "part 2" do
+    assert Day8.part2() == 590_824
   end
 end
