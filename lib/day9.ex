@@ -1,22 +1,52 @@
 defmodule Day9 do
-  def part1 do
-    parse()
-    |> make_moves({{0, 0}, {0, 0}})
-    |> elem(1)
-    |> MapSet.size()
+  defmodule Rope do
+    defstruct head: {0, 0},
+              tail: {0, 0},
+              knots: [],
+              visited: MapSet.new([{0, 0}])
   end
 
-  def make_moves(moves, start) do
-    tail_visits = MapSet.new() |> MapSet.put(elem(start, 1))
+  def part1 do
+    parse()
+    |> move_with_knots(2)
+    |> then(fn {_, _, visited} -> MapSet.size(visited) end)
+  end
+
+  def part2 do
+    parse()
+    |> move_with_knots(10)
+    |> then(fn {_, _, visited} -> MapSet.size(visited) end)
+  end
+
+  def move_with_knots(moves, knot_count) do
+    knots =
+      cond do
+        knot_count > 2 ->
+          for(_ <- 3..knot_count, do: {0, 0})
+
+        true ->
+          []
+      end
 
     moves
-    |> Enum.reduce({start, tail_visits}, fn {dir, num}, acc ->
-      Enum.reduce(1..num, {acc, dir}, fn _, {{pos, tail_visits}, dir} ->
-        new_pos = move(pos, dir)
-        {{new_pos, MapSet.put(tail_visits, elem(new_pos, 1))}, dir}
+    |> Enum.reduce(%Rope{knots: knots}, &make_moves/2)
+    |> then(fn %Rope{head: h, tail: t, visited: visited} -> {h, t, visited} end)
+  end
+
+  def make_moves({_, 0}, rope), do: rope
+
+  def make_moves({dir, amount}, rope) do
+    head = step_head(rope.head, dir)
+
+    {knots, leader} =
+      Enum.map_reduce(rope.knots, head, fn knot, leader ->
+        new_knot = step_tail(leader, knot)
+        {new_knot, new_knot}
       end)
-      |> elem(0)
-    end)
+
+    tail = step_tail(leader, rope.tail)
+    visited = MapSet.put(rope.visited, tail)
+    make_moves({dir, amount - 1}, %Rope{head: head, tail: tail, knots: knots, visited: visited})
   end
 
   def step_head({r, c}, :R), do: {r, c + 1}
@@ -36,12 +66,12 @@ defmodule Day9 do
     {tr + dr, tc + dc}
   end
 
-  def move({h, t}, dir) do
+  def move(h, t, dir) do
     h = step_head(h, dir)
     {h, step_tail(h, t)}
   end
 
-  def(parse(input \\ File.read!("lib/fixtures/day9.txt"))) do
+  def parse(input \\ File.read!("lib/fixtures/day9.txt")) do
     input
     |> String.split("\n", trim: true)
     |> Enum.map(&String.split(&1, " ", trim: true))
