@@ -150,6 +150,15 @@ defmodule Day9Test do
   noop
   """
 
+  @output """
+  ##..##..##..##..##..##..##..##..##..##..
+  ###...###...###...###...###...###...###.
+  ####....####....####....####....####....
+  #####.....#####.....#####.....#####.....
+  ######......######......######......####
+  #######.......#######.......#######.....\
+  """
+
   test "parsing" do
     data = Day10.parse(@input)
     assert length(data) == 146
@@ -172,6 +181,7 @@ defmodule Day9Test do
     data = Day10.parse(@input)
     {_, _, history} = Day10.run(data)
 
+    assert Day10.register_during(1, history) == 1
     assert Day10.register_during(20, history) == 21
     assert Day10.register_during(60, history) == 19
     assert Day10.register_during(100, history) == 18
@@ -199,7 +209,34 @@ defmodule Day9Test do
     end
   end
 
+  describe "drawing" do
+    test "during a single cycle" do
+      assert Day10.draw(0, 2) == "."
+      assert Day10.draw(1, 2) == "#"
+      assert Day10.draw(2, 2) == "#"
+      assert Day10.draw(3, 2) == "#"
+      assert Day10.draw(4, 2) == "."
+    end
+
+    test "for an entire program" do
+      data = Day10.parse(@input)
+      screen = Day10.draw(data)
+      assert screen == @output
+    end
+  end
+
   test "part 1" do
     assert Day10.part1() == 14920
+  end
+
+  test "part 2" do
+    IO.puts Day10.part2() == """
+    ###..#..#..##...##...##..###..#..#.####.
+    #..#.#..#.#..#.#..#.#..#.#..#.#..#....#.
+    ###..#..#.#....#..#.#....###..#..#...#..
+    #..#.#..#.#....####.#....#..#.#..#..#...
+    #..#.#..#.#..#.#..#.#..#.#..#.#..#.#....
+    ###...##...##..#..#..##..###...##..####.\
+    """
   end
 end

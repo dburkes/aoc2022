@@ -4,6 +4,24 @@ defmodule Day10 do
     |> signal_strength()
   end
 
+  def part2() do
+    parse()
+    |> draw()
+  end
+
+  def draw(program) do
+    history = run(program, 240) |> elem(2)
+    1..240
+    |> Enum.reduce("", fn cycle, screen ->
+      screen <> draw(rem(cycle - 1, 40), register_during(cycle, history))
+    end)
+    |> then(fn s -> Regex.scan(~r/.{40}/, s) |> Enum.join("\n") end)
+  end
+
+  def draw(draw_position, sprite_position) do
+    if (sprite_position in draw_position - 1..draw_position + 1), do: "#", else: "."
+  end
+
   def signal_strength(program) do
     {_, _, history} = run(program)
 
@@ -19,7 +37,7 @@ defmodule Day10 do
     Enum.split_with(history, fn {cycle_num, _} -> cycle_num < cycle end)
     |> elem(0)
     |> List.last()
-    |> elem(1)
+    |> then(fn r -> if (r == nil), do: 1, else: elem(r, 1) end)
   end
 
   def run(program, cycles \\ 1_000_000) do
