@@ -1,4 +1,4 @@
-defmodule Day9Test do
+defmodule Day10Test do
   use ExUnit.Case
 
   @input """
