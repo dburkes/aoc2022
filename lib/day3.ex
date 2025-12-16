@@ -17,25 +17,22 @@ defmodule Day3 do
   end
 
   def find_common_item({left, right}) do
-    left_chars = String.codepoints(left)
-    right_chars = String.codepoints(right)
-
-    Enum.find(left_chars, &Enum.member?(right_chars, &1))
+    Enum.find(left, &Enum.member?(right, &1))
   end
 
   def find_common_item(sack1, sack2, sack3) do
-    sack1_chars = String.codepoints(elem(sack1, 0) <> elem(sack1, 1))
-    sack2_chars = String.codepoints(elem(sack2, 0) <> elem(sack2, 1))
-    sack3_chars = String.codepoints(elem(sack3, 0) <> elem(sack3, 1))
+    sack1_chars = elem(sack1, 0) ++ elem(sack1, 1)
+    sack2_chars = elem(sack2, 0) ++ elem(sack2, 1)
+    sack3_chars = elem(sack3, 0) ++ elem(sack3, 1)
 
     Enum.find(sack1_chars, &(Enum.member?(sack2_chars, &1) && Enum.member?(sack3_chars, &1)))
   end
 
   def priority(item) do
-    if String.upcase(item) == item do
-      hd(String.to_charlist(item)) - ?A + 27
+    if item in ?A..?Z do
+      item - ?A + 27
     else
-      hd(String.to_charlist(item)) - ?a + 1
+      item - ?a + 1
     end
   end
 
@@ -45,7 +42,7 @@ defmodule Day3 do
     |> String.split("\n")
     |> Enum.map(fn line ->
       halfs = String.split_at(line, div(String.length(line), 2))
-      {elem(halfs, 0), elem(halfs, 1)}
+      {String.to_charlist(elem(halfs, 0)), String.to_charlist(elem(halfs, 1))}
     end)
   end
 end
