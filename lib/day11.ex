@@ -1,10 +1,14 @@
 defmodule Day11 do
   def part1() do
-    monkey_business(parse(), 20)
+    monkey_business(parse(), 20, 3)
   end
 
-  def monkey_business(monkey_data, num_rounds) do
-    do_rounds(monkey_data, num_rounds)
+  def part2() do
+    monkey_business(parse(), 10000)
+  end
+
+  def monkey_business(monkey_data, num_rounds, divisor \\ 1) do
+    do_rounds(monkey_data, num_rounds, divisor)
     |> Map.values()
     |> Enum.into([], fn m -> Map.get(m, :inspections) end)
     |> Enum.sort(:desc)
@@ -12,21 +16,28 @@ defmodule Day11 do
     |> Enum.reduce(1, fn x, acc -> x * acc end)
   end
 
-  def do_rounds(monkey_data, num_rounds) do
+  def do_rounds(monkey_data, num_rounds, divisor \\ 1) do
+    lcm =
+      Map.keys(monkey_data)
+      |> Enum.reduce(1, fn monkey_id, acc ->
+        this_monkey_data = Map.get(monkey_data, monkey_id)
+        acc * Map.get(this_monkey_data, :test)
+      end)
+
     1..num_rounds
     |> Enum.reduce(monkey_data, fn _, data ->
-      do_round(data)
+      do_round(data, divisor, lcm)
     end)
   end
 
-  def do_round(monkey_data) do
+  def do_round(monkey_data, divisor \\ 1, lcm \\ nil) do
     Map.keys(monkey_data)
     |> Enum.reduce(monkey_data, fn monkey_id, monkeys ->
-      turn(monkeys, monkey_id)
+      turn(monkeys, monkey_id, divisor, lcm)
     end)
   end
 
-  def turn(monkey_data, monkey_id) do
+  def turn(monkey_data, monkey_id, divisor \\ 1, lcm \\ nil) do
     this_monkey = Map.get(monkey_data, monkey_id)
 
     items = Map.get(this_monkey, :items)
@@ -47,7 +58,14 @@ defmodule Day11 do
             item * item
         end
 
-      worry_level = div(worry_level, 3)
+      worry_level =
+        case divisor do
+          1 ->
+            rem(worry_level, lcm)
+
+          _ ->
+            div(worry_level, divisor)
+        end
 
       test = Map.get(monkey, :test)
 

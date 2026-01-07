@@ -46,7 +46,7 @@ defmodule Day11Test do
 
   test "turn" do
     monkey_data = Day11.parse(@input)
-    new_monkey_data = Day11.turn(monkey_data, 0)
+    new_monkey_data = Day11.turn(monkey_data, 0, 3)
 
     new_monkey_0 = Map.get(new_monkey_data, 0)
     assert Map.get(new_monkey_0, :items) == []
@@ -57,7 +57,7 @@ defmodule Day11Test do
 
   test "do_round" do
     monkey_data = Day11.parse(@input)
-    new_monkey_data = Day11.do_round(monkey_data)
+    new_monkey_data = Day11.do_round(monkey_data, 3)
 
     new_monkey_0 = Map.get(new_monkey_data, 0)
     assert Map.get(new_monkey_0, :items) == [20, 23, 27, 26]
@@ -74,7 +74,7 @@ defmodule Day11Test do
 
   test "do_rounds" do
     monkey_data = Day11.parse(@input)
-    new_monkey_data = Day11.do_rounds(monkey_data, 20)
+    new_monkey_data = Day11.do_rounds(monkey_data, 20, 3)
 
     new_monkey_0 = Map.get(new_monkey_data, 0)
     assert Map.get(new_monkey_0, :items) == [10, 12, 14, 26, 34]
@@ -95,10 +95,14 @@ defmodule Day11Test do
 
   test "monkey business" do
     monkey_data = Day11.parse(@input)
-    assert Day11.monkey_business(monkey_data, 20) == 10605
+    assert Day11.monkey_business(monkey_data, 20, 3) == 10605
   end
 
   test "part 1" do
     assert Day11.part1() == 51075
+  end
+
+  test "part 2" do
+    assert Day11.part2() == 11_741_456_163
   end
 end
