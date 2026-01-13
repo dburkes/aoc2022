@@ -145,6 +145,6 @@ defmodule Day12Test do
   end
 
   test "part 2" do
-    assert Day13.part2() == 0
+    assert Day13.part2() == 26289
   end
 end

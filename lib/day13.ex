@@ -17,7 +17,6 @@ defmodule Day13 do
   def sort_packets(data) do
       data
       |> Enum.reduce([], fn {_, {l, r}}, acc -> [l, r | acc] end)
-      |> Enum.reverse()
       |> Enum.concat([[[2]], [[6]]])
       |> Enum.sort(fn left, right -> compare(left, right) == :lt end)
   end
