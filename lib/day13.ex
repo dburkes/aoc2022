@@ -3,6 +3,25 @@ defmodule Day13 do
     score(parse())
   end
 
+  def part2() do
+    find_decoder_key(parse())
+  end
+
+  def find_decoder_key(data) do
+    sorted = sort_packets(data)
+    index_2 = Enum.find_index(sorted, &(&1 == [[2]])) + 1
+    index_6 = Enum.find_index(sorted, &(&1 == [[6]])) + 1
+    index_2 * index_6
+  end
+
+  def sort_packets(data) do
+      data
+      |> Enum.reduce([], fn {_, {l, r}}, acc -> [l, r | acc] end)
+      |> Enum.reverse()
+      |> Enum.concat([[[2]], [[6]]])
+      |> Enum.sort(fn left, right -> compare(left, right) == :lt end)
+  end
+
   def score(data) do
     data
     |> Enum.into(%{}, fn {num, pairs} ->
@@ -49,7 +68,11 @@ defmodule Day13 do
 
     case comparison do
       :eq ->
-        if length(left) <= length(right), do: :lt, else: :gt
+        cond do
+          length(left) < length(right) -> :lt
+          length(left) > length(right) -> :gt
+          true -> :eq
+        end
 
       _ ->
         comparison
