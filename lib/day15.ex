@@ -6,14 +6,11 @@ defmodule Day15 do
 
   def all_exclusions_for(pairs, y) do
     pairs
-    |> Enum.map(&exclusions_for(&1, y))
-    |> Enum.reject(fn r -> r == nil end)
-    |> List.flatten()
-    |> Enum.sort()
-    |> Enum.map(&Range.to_list/1)
-    |> List.flatten()
-    |> Enum.uniq()
-    |> length()
+    |> Enum.flat_map(&exclusions_for(&1, y))
+    |> Enum.reduce(MapSet.new(), fn range, acc ->
+      MapSet.union(acc, MapSet.new(range))
+    end)
+    |> MapSet.size()
   end
 
   def num_exclusions_for(pair, y) do
@@ -25,7 +22,7 @@ defmodule Day15 do
     max_distance = distance(sensor, beacon) - abs(sy - y)
 
     if(max_distance < 0) do
-      nil
+      []
     else
       if by == y do
         r = (sx - max_distance)..(sx + max_distance)
