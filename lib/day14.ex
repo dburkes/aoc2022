@@ -1,16 +1,36 @@
 defmodule Day14 do
   def part1() do
+    run(:infinite)
+  end
+
+  def part2() do
+    run(:blocked)
+  end
+
+  def run(stop_condition) do
     {rocks, max_y} = parse()
-    max_grains(rocks, max_y)
+    max_grains(rocks, max_y, stop_condition)
   end
 
-  def max_grains(rocks, max_y) do
-    flow(rocks, max_y, MapSet.new())
+  def max_grains(rocks, max_y, stop_condition) do
+    flow(rocks, max_y, MapSet.new(), {500, 0}, stop_condition)
   end
 
-  def flow(rocks, max_y, grains) do
-    {x, y} = flow_grain(MapSet.union(rocks, grains), max_y)
-    if y < max_y, do: flow(rocks, max_y, MapSet.put(grains, {x, y})), else: MapSet.size(grains)
+  def flow(rocks, max_y, grains, start, stop_condition) do
+    floor_y = if stop_condition == :blocked, do: max_y + 1, else: max_y
+    {x, y} = flow_grain(MapSet.union(rocks, grains), floor_y, start)
+
+    case stop_condition do
+      :infinite ->
+        if y < max_y,
+          do: flow(rocks, max_y, MapSet.put(grains, {x, y}), start, stop_condition),
+          else: MapSet.size(grains)
+
+      :blocked ->
+        if {x, y} != start,
+          do: flow(rocks, max_y, MapSet.put(grains, {x, y}), start, stop_condition),
+          else: MapSet.size(grains) + 1
+    end
   end
 
   def flow_grain(obstacles, max_y, {x, y} \\ {500, 0}) do

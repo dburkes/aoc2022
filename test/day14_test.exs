@@ -79,11 +79,20 @@ defmodule Day14Test do
   describe("flowing multiple grains of sand") do
     test "stops when infinite flow is achieved" do
       {rocks, max_y} = Day14.parse(@input)
-      assert Day14.max_grains(rocks, max_y) == 24
+      assert Day14.max_grains(rocks, max_y, :infinite) == 24
+    end
+
+    test "stops when the source is blocked" do
+      {rocks, max_y} = Day14.parse(@input)
+      assert Day14.max_grains(rocks, max_y, :blocked) == 93
     end
   end
 
   test "part 1" do
-    assert Day14.part1() == 0
+    assert Day14.part1() == 674
+  end
+
+  test "part 2" do
+    assert Day14.part2() == 24958
   end
 end
