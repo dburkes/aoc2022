@@ -40,43 +40,46 @@ defmodule Day15Test do
            ]
   end
 
+  describe "range splitting" do
+    test "mid-range" do
+      assert Day15.split_range_with_exclusion(5..10, 8) == [5..7, 9..10]
+    end
+
+    test "head of range" do
+      assert Day15.split_range_with_exclusion(5..10, 5) == [6..10]
+    end
+
+    test "tail of range" do
+      assert Day15.split_range_with_exclusion(5..10, 10) == [5..9]
+    end
+
+    test "out of range" do
+      assert Day15.split_range_with_exclusion(5..10, 14) == [5..10]
+    end
+
+    test "entire range" do
+      assert Day15.split_range_with_exclusion(2..2, 2) == []
+    end
+  end
+
   describe "calculating exclusions" do
     test "for a single pair" do
-      assert Day15.exclusions_for({{8, 7}, {2, 10}}, -2) == MapSet.new([{8, -2}])
+      assert Day15.exclusions_for({{8, 7}, {2, 10}}, -2) == [8..8]
+      assert Day15.num_exclusions_for({{8, 7}, {2, 10}}, -2) == 1
 
-      assert Day15.exclusions_for({{8, 7}, {2, 10}}, -1) ==
-               MapSet.new([{7, -1}, {8, -1}, {9, -1}])
+      assert Day15.exclusions_for({{8, 7}, {2, 10}}, -1) == [7..9]
+      assert Day15.num_exclusions_for({{8, 7}, {2, 10}}, -1) == 3
 
-      assert Day15.exclusions_for({{8, 7}, {2, 10}}, 7) ==
-               MapSet.new([
-                 {-1, 7},
-                 {0, 7},
-                 {1, 7},
-                 {2, 7},
-                 {3, 7},
-                 {4, 7},
-                 {5, 7},
-                 {6, 7},
-                 {7, 7},
-                 {8, 7},
-                 {9, 7},
-                 {10, 7},
-                 {11, 7},
-                 {12, 7},
-                 {13, 7},
-                 {14, 7},
-                 {15, 7},
-                 {16, 7},
-                 {17, 7}
-               ])
+      assert Day15.exclusions_for({{8, 7}, {2, 10}}, 7) == [-1..17]
+      assert Day15.num_exclusions_for({{8, 7}, {2, 10}}, 7) == 19
 
-      refute MapSet.member?(Day15.exclusions_for({{8, 7}, {2, 10}}, 10), {2, 10})
+      assert Day15.exclusions_for({{8, 7}, {2, 10}}, 10) == [3..14]
+      assert Day15.num_exclusions_for({{8, 7}, {2, 10}}, 10) == 12
     end
 
     test "for multiple pairs" do
       pairs = Day15.parse(@input)
-      exclusions = Day15.all_exclusions_for(pairs, 10)
-      assert MapSet.size(exclusions) == 26
+      assert Day15.all_exclusions_for(pairs, 10) == 26
     end
   end
 

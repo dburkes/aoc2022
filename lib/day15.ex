@@ -2,24 +2,59 @@ defmodule Day15 do
   def part1() do
     parse()
     |> all_exclusions_for(2_000_000)
-    |> MapSet.size()
   end
 
   def all_exclusions_for(pairs, y) do
     pairs
     |> Enum.map(&exclusions_for(&1, y))
-    |> Enum.reduce(MapSet.new(), &MapSet.union/2)
+    |> Enum.reject(fn r -> r == nil end)
+    |> List.flatten()
+    |> Enum.sort()
+    |> Enum.map(&Range.to_list/1)
+    |> List.flatten()
+    |> Enum.uniq()
+    |> length()
   end
 
-  def exclusions_for({{sx, sy} = sensor, beacon}, y) do
+  def num_exclusions_for(pair, y) do
+    exclusions_for(pair, y)
+    |> Enum.sum_by(&Range.size/1)
+  end
+
+  def exclusions_for({{sx, sy} = sensor, {bx, by} = beacon}, y) do
     max_distance = distance(sensor, beacon) - abs(sy - y)
 
     if(max_distance < 0) do
-      MapSet.new()
+      nil
     else
-      (sx - max_distance)..(sx + max_distance)
-      |> Enum.reduce(MapSet.new(), fn x, acc -> MapSet.put(acc, {x, y}) end)
-      |> MapSet.delete(beacon)
+      if by == y do
+        r = (sx - max_distance)..(sx + max_distance)
+        split_range_with_exclusion(r, bx)
+      else
+        [(sx - max_distance)..(sx + max_distance)]
+      end
+    end
+  end
+
+  def split_range_with_exclusion(r, ex) do
+    first..last//1 = r
+
+    if ex in r do
+      cond do
+        ex == first and ex == last ->
+          []
+
+        ex == first ->
+          [(first + 1)..last//1]
+
+        ex == last ->
+          [first..(last - 1)//1]
+
+        true ->
+          [first..(ex - 1)//1, (ex + 1)..last//1]
+      end
+    else
+      [r]
     end
   end
 
