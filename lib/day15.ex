@@ -11,18 +11,34 @@ defmodule Day15 do
   end
 
   def find_distress_beacon(pairs, max_xy) do
+    parent = self()
+    ref = make_ref()
+
+    schedulers = System.schedulers_online()
+    chunk_size = div(max_xy + 1, schedulers) + 1
+
     0..max_xy
-    |> Enum.reduce_while(0, fn row, _ ->
-      exclusions = all_exclusions_for(pairs, row, false)
+    |> Enum.chunk_every(chunk_size)
+    |> Enum.map(fn chunk ->
+      spawn_link(fn ->
+        result =
+          Enum.find_value(chunk, fn row ->
+            exclusions = all_exclusions_for(pairs, row, false)
 
-      case length(exclusions) > 1 do
-        true ->
-          {:halt, {Enum.at(exclusions, 0).last + 1, row}}
+            if length(exclusions) > 1 do
+              {Enum.at(exclusions, 0).last + 1, row}
+            else
+              nil
+            end
+          end)
 
-        false ->
-          {:cont, 0}
-      end
+        if result, do: send(parent, {ref, result})
+      end)
     end)
+
+    receive do
+      {^ref, result} -> result
+    end
   end
 
   def num_exclusions_for(pairs, y, exclude_beacons \\ true) do
