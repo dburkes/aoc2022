@@ -65,25 +65,27 @@ defmodule Day15Test do
   describe "calculating exclusions" do
     test "for a single pair" do
       assert Day15.exclusions_for({{8, 7}, {2, 10}}, -2) == [8..8]
-      assert Day15.num_exclusions_for({{8, 7}, {2, 10}}, -2) == 1
-
       assert Day15.exclusions_for({{8, 7}, {2, 10}}, -1) == [7..9]
-      assert Day15.num_exclusions_for({{8, 7}, {2, 10}}, -1) == 3
-
       assert Day15.exclusions_for({{8, 7}, {2, 10}}, 7) == [-1..17]
-      assert Day15.num_exclusions_for({{8, 7}, {2, 10}}, 7) == 19
-
       assert Day15.exclusions_for({{8, 7}, {2, 10}}, 10) == [3..14]
-      assert Day15.num_exclusions_for({{8, 7}, {2, 10}}, 10) == 12
     end
 
     test "for multiple pairs" do
       pairs = Day15.parse(@input)
-      assert Day15.all_exclusions_for(pairs, 10) == 26
+      assert Day15.num_exclusions_for(pairs, 10) == 26
     end
+  end
+
+  test "finding distress beacon" do
+    pairs = Day15.parse(@input)
+    assert Day15.find_distress_beacon(pairs, 20) == {14, 11}
   end
 
   test "part 1" do
     assert Day15.part1() == 4_876_693
+  end
+
+  test "part 2" do
+    assert Day15.part2() == 11_645_454_855_041
   end
 end
