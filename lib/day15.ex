@@ -13,15 +13,15 @@ defmodule Day15 do
   def find_distress_beacon(pairs, max_xy) do
     0..max_xy
     |> Enum.reduce_while(0, fn row, _ ->
-      bounded_exclusions = all_exclusions_for(pairs, row, false)
+      exclusions = all_exclusions_for(pairs, row, false)
 
-      case length(bounded_exclusions) > 1 do
+      case length(exclusions) > 1 do
         true ->
-          {:halt, {Enum.at(bounded_exclusions, 0).last + 1, row}}
+          {:halt, {Enum.at(exclusions, 0).last + 1, row}}
 
-          false ->
-            {:cont, 0}
-          end
+        false ->
+          {:cont, 0}
+      end
     end)
   end
 
@@ -43,12 +43,11 @@ defmodule Day15 do
       []
     else
       if by == y do
-        if exclude_beacons
-          do
-            split_range_with_exclusion((sx - max_distance)..(sx + max_distance), bx)
-            else
-              [(sx - max_distance)..(sx + max_distance)]
-          end
+        if exclude_beacons do
+          split_range_with_exclusion((sx - max_distance)..(sx + max_distance), bx)
+        else
+          [(sx - max_distance)..(sx + max_distance)]
+        end
       else
         [(sx - max_distance)..(sx + max_distance)]
       end
@@ -59,10 +58,12 @@ defmodule Day15 do
     Enum.sort(ranges)
     |> Enum.reduce([], fn current_range, merged_acc ->
       case merged_acc do
-        [] -> [current_range]
+        [] ->
+          [current_range]
+
         [last_merged | rest] ->
           if last_merged.last >= current_range.first - 1 do
-            [(last_merged.first..max(last_merged.last, current_range.last))] ++ rest
+            [last_merged.first..max(last_merged.last, current_range.last)] ++ rest
           else
             [current_range | merged_acc]
           end
